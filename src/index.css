@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Motion numbers follow design-taste-frontend/references/motion.md:
+   hover in 150ms, out 120ms, press 90ms, one UI ease, no bounce or overshoot. */
+:root {
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --m-in: 150ms;
+  --m-out: 120ms;
+  --m-press: 90ms;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-slate-50 font-sans text-slate-900;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  button,
+  a {
+    touch-action: manipulation;
+  }
+  /* one focus look: a 2px ring in the action colour, 2px off the control */
+  :focus-visible {
+    outline: 2px solid theme('colors.indigo.600');
+    outline-offset: 2px;
+  }
+  input:focus-visible,
+  select:focus-visible {
+    outline: none;
+  }
+}
+
+@layer components {
+  /* Buttons: step up 1px on hover, sink 1px and scale .985 on press. */
+  .btn-step {
+    transition:
+      transform var(--m-out) var(--ease),
+      background-color var(--m-out) var(--ease),
+      border-color var(--m-out) var(--ease),
+      color var(--m-out) var(--ease);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-step:hover {
+      transform: translateY(-1px);
+      transition-duration: var(--m-in);
+    }
+  }
+  .btn-step:active {
+    transform: translateY(1px) scale(0.985);
+    transition-duration: var(--m-press);
+  }
+
+  /* A card that links somewhere lifts 2px and its border darkens a step. */
+  .lift {
+    transition:
+      transform 120ms var(--ease),
+      border-color 120ms var(--ease),
+      box-shadow 120ms var(--ease);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lift:hover {
+      transform: translateY(-2px);
+      border-color: theme('colors.slate.300');
+      box-shadow: 0 8px 24px rgb(31 48 56 / 0.08);
+      transition-duration: 180ms;
+    }
+  }
+
+  /* Text links: an ink line draws left to right. */
+  .link-draw {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size var(--m-out) var(--ease);
+  }
+  .link-draw:hover {
+    background-size: 100% 1px;
+    transition-duration: var(--m-in);
+  }
+}
+
+@layer utilities {
+  .perspective {
+    perspective: 1200px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* The home heading arrives once on load, then stands. */
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.enter > * {
+  animation: enter-rise 620ms var(--ease-enter) both;
+}
+.enter > *:nth-child(2) {
+  animation-delay: 80ms;
+}
+.enter > *:nth-child(3) {
+  animation-delay: 160ms;
+}
+.enter > *:nth-child(n + 4) {
+  animation-delay: 220ms;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+.animate-shake {
+  animation: shake 0.3s var(--ease);
+}
+/* a correct answer settles into place (no overshoot) */
+@keyframes settle {
+  from {
+    transform: scale(0.98);
+  }
+  to {
+    transform: none;
+  }
+}
+.animate-pop {
+  animation: settle 240ms var(--ease-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
