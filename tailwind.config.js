@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 // Design tokens dealt by the design-taste-frontend skill:
 //   palette "cool-white-slate" (Frost and slate): ground #f7f9fa, surface #ecf0f2, ink #1f3038, accent #0d7480
-//   type "gabarito": Gabarito (display) + Figtree (text) + DM Mono (IPA), radius "round".
+//   type: Be Vietnam Pro (display + text, full Vietnamese) + Noto Sans Mono (IPA, full IPA coverage), radius "round".
 // `slate` is the neutral scale built on that ink, `indigo` is re-pointed at the teal accent so the
 // whole UI stays one system; violet/fuchsia are removed (skill rule: never violet).
 const neutral = {
@@ -45,9 +45,9 @@ export default {
         surface: neutral[100],
       },
       fontFamily: {
-        sans: ['Figtree', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['Gabarito', 'Figtree', 'system-ui', 'sans-serif'],
-        mono: ['"DM Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        sans: ['"Be Vietnam Pro"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Be Vietnam Pro"', 'system-ui', 'sans-serif'],
+        mono: ['"Noto Sans Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       transitionTimingFunction: {
         ui: 'cubic-bezier(.2,.8,.2,1)',

@@ -150,7 +150,7 @@ Skill này viết cho website giới thiệu công ty, nên chỉ lấy những 
 - **Bảng màu do skill tự chọn** (`start.mjs deal`), lấy phương án đầu tiên: *cool-white-slate*.
   - Nền `#f7f9fa`, chữ `#1f3038`, một màu nhấn teal `#0d7480` dùng cho nút chính, tiến độ và viền focus.
   - Giao diện giữ 90–95% trung tính. Không dùng tím, không gradient, không mỗi unit một màu.
-- **Font:** Gabarito (tiêu đề) + Figtree (chữ thường) + DM Mono (phiên âm IPA).
+- **Font:** Be Vietnam Pro (tiêu đề + chữ thường, đủ dấu tiếng Việt) + Noto Sans Mono (phiên âm IPA, đủ ký tự IPA).
   - Skill gợi ý cặp này cho app tiêu dùng và vui tươi, hợp với học sinh lớp 8 hơn cặp đầu tiên (Host Grotesk, vốn dành cho phần mềm nghiêm túc).
   - Bo góc kiểu `round`.
 - **Điểm nhấn bằng chữ:** số unit đặt rất to, như trang mục lục của sách, thay cho icon trong ô màu.
