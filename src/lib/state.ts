@@ -1,17 +1,22 @@
 // Pure progress-state helpers shared by the browser and the Netlify function.
 // No runtime imports, so it runs in the browser, in the function bundle and under plain Node.
+import type { ExamAttempt, QuestionProgress } from '../types/exam';
 import type { Accent, ProgressState, ScopeScore, Settings, WordProgress } from '../types/vocab';
 
 export const DEFAULT_SETTINGS: Settings = { accent: 'en-GB', rate: 0.9, autoSpeak: true };
 
 export function emptyState(): ProgressState {
-  return { version: 1, words: {}, scores: {}, settings: { ...DEFAULT_SETTINGS } };
+  return { version: 2, words: {}, scores: {}, questions: {}, attempts: {}, settings: { ...DEFAULT_SETTINGS } };
 }
 
 const num = (v: unknown, min: number, max: number): number | undefined =>
   typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : undefined;
 const ID_RE = /^[a-z0-9-]{1,80}$/;
 const MAX_TIME = 4102444800000; // year 2100
+/** keeps the synced state well under the server's request limit */
+export const MAX_ATTEMPTS = 60;
+const MAX_ANSWERS = 300;
+const MAX_ANSWER_LEN = 6000; // a writing answer of ~150 words fits many times over
 
 function cleanWord(raw: unknown): WordProgress | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -42,6 +47,68 @@ function cleanScore(raw: unknown): ScopeScore | null {
   return s;
 }
 
+function cleanQuestion(raw: unknown): QuestionProgress | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  const q: QuestionProgress = {};
+  const wrong = num(r.wrong, 0, 1e6);
+  const right = num(r.right, 0, 1e6);
+  const t = num(r.t, 0, MAX_TIME);
+  if (wrong) q.wrong = Math.floor(wrong);
+  if (right) q.right = Math.floor(right);
+  if (r.missed === true) q.missed = true;
+  if (r.srs && typeof r.srs === 'object') {
+    const sr = r.srs as Record<string, unknown>;
+    const due = num(sr.due, 0, MAX_TIME);
+    const step = num(sr.step, 0, 20);
+    if (due !== undefined && step !== undefined) q.srs = { due, step: Math.floor(step) };
+  }
+  if (t !== undefined) q.t = t;
+  return q;
+}
+
+function cleanAttempt(id: string, raw: unknown): ExamAttempt | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  const examId = typeof r.examId === 'string' && ID_RE.test(r.examId) ? r.examId : null;
+  const startedAt = num(r.startedAt, 0, MAX_TIME);
+  const t = num(r.t, 0, MAX_TIME);
+  if (!examId || startedAt === undefined || t === undefined) return null;
+  const a: ExamAttempt = { id, examId, startedAt, answers: {}, t };
+  if (r.answers && typeof r.answers === 'object') {
+    for (const [qid, v] of Object.entries(r.answers as Record<string, unknown>).slice(0, MAX_ANSWERS)) {
+      if (ID_RE.test(qid) && typeof v === 'string' && v.length <= MAX_ANSWER_LEN) a.answers[qid] = v;
+    }
+  }
+  if (Array.isArray(r.flagged)) {
+    const f = r.flagged.filter((x): x is string => typeof x === 'string' && ID_RE.test(x)).slice(0, MAX_ANSWERS);
+    if (f.length) a.flagged = [...new Set(f)];
+  }
+  if (r.selfScores && typeof r.selfScores === 'object') {
+    const ss: Record<string, number> = {};
+    for (const [sid, v] of Object.entries(r.selfScores as Record<string, unknown>).slice(0, 50)) {
+      const n = num(v, 0, 1000);
+      if (ID_RE.test(sid) && n !== undefined) ss[sid] = n;
+    }
+    if (Object.keys(ss).length) a.selfScores = ss;
+  }
+  const submittedAt = num(r.submittedAt, 0, MAX_TIME);
+  const score = num(r.score, 0, 1000);
+  const remainingMs = num(r.remainingMs, 0, 24 * 3_600_000);
+  if (submittedAt !== undefined) a.submittedAt = submittedAt;
+  if (score !== undefined) a.score = score;
+  if (remainingMs !== undefined) a.remainingMs = remainingMs;
+  return a;
+}
+
+/** The newest attempts only, so the state cannot grow without bound. Deterministic, so every device keeps the same ones. */
+function capAttempts(all: Record<string, ExamAttempt>): Record<string, ExamAttempt> {
+  const list = Object.values(all);
+  if (list.length <= MAX_ATTEMPTS) return all;
+  list.sort((x, y) => y.startedAt - x.startedAt || (x.id < y.id ? -1 : 1));
+  return Object.fromEntries(list.slice(0, MAX_ATTEMPTS).map((a) => [a.id, a]));
+}
+
 /** Accepts anything (localStorage, an imported file, a request body) and returns a valid state. */
 export function sanitizeState(raw: unknown): ProgressState {
   const base = emptyState();
@@ -58,6 +125,19 @@ export function sanitizeState(raw: unknown): ProgressState {
       const s = ID_RE.test(scope) ? cleanScore(v) : null;
       if (s) base.scores[scope] = s;
     }
+  }
+  if (r.questions && typeof r.questions === 'object') {
+    for (const [id, v] of Object.entries(r.questions as Record<string, unknown>)) {
+      const q = ID_RE.test(id) ? cleanQuestion(v) : null;
+      if (q) base.questions[id] = q;
+    }
+  }
+  if (r.attempts && typeof r.attempts === 'object') {
+    for (const [id, v] of Object.entries(r.attempts as Record<string, unknown>)) {
+      const a = ID_RE.test(id) ? cleanAttempt(id, v) : null;
+      if (a) base.attempts[id] = a;
+    }
+    base.attempts = capAttempts(base.attempts);
   }
   if (r.settings && typeof r.settings === 'object') {
     const s = r.settings as Record<string, unknown>;
@@ -76,7 +156,8 @@ export function sanitizeState(raw: unknown): ProgressState {
 
 /**
  * Merge two devices' progress without losing work:
- * - each word: the entry changed last wins (an emptied entry is kept as a tombstone so it can win too);
+ * - each word, exam question and exam attempt: the entry changed last wins
+ *   (an emptied entry is kept as a tombstone so it can win too);
  * - each score: the best of both;
  * - "Xóa tiến độ" (resetAt): the latest reset drops everything older on both sides;
  * - settings and the last unit: the side changed last.
@@ -86,14 +167,19 @@ export function mergeStates(a: ProgressState, b: ProgressState): ProgressState {
   const out = emptyState();
   if (resetAt) out.resetAt = resetAt;
 
-  const ids = new Set([...Object.keys(a.words), ...Object.keys(b.words)]);
-  for (const id of ids) {
-    const x = a.words[id];
-    const y = b.words[id];
-    const win = !x ? y : !y ? x : (y.t ?? 0) > (x.t ?? 0) ? y : x;
-    // entries saved before syncing existed have no `t`; keep them unless a reset happened since
-    if (win && (!resetAt || (win.t ?? 0) > resetAt)) out.words[id] = { ...win };
-  }
+  const newest = <T extends { t?: number }>(x: Record<string, T>, y: Record<string, T>, into: Record<string, T>) => {
+    for (const id of new Set([...Object.keys(x), ...Object.keys(y)])) {
+      const p = x[id];
+      const q = y[id];
+      const win = !p ? q : !q ? p : (q.t ?? 0) > (p.t ?? 0) ? q : p;
+      if (win && (!resetAt || (win.t ?? 0) > resetAt)) into[id] = { ...win };
+    }
+  };
+  // entries saved before syncing existed have no `t`; they are kept unless a reset happened since
+  newest(a.words, b.words, out.words);
+  newest(a.questions, b.questions, out.questions);
+  newest(a.attempts, b.attempts, out.attempts);
+  out.attempts = capAttempts(out.attempts);
 
   const scopes = new Set([...Object.keys(a.scores), ...Object.keys(b.scores)]);
   const resetIso = resetAt ? new Date(resetAt).toISOString() : '';
@@ -127,5 +213,11 @@ export function mergeStates(a: ProgressState, b: ProgressState): ProgressState {
 /** Stable JSON for "did anything change?" checks. */
 export function stateKey(s: ProgressState): string {
   const sortObj = (o: Record<string, unknown>) => Object.fromEntries(Object.entries(o).sort(([x], [y]) => (x < y ? -1 : 1)));
-  return JSON.stringify({ ...s, words: sortObj(s.words), scores: sortObj(s.scores) });
+  return JSON.stringify({
+    ...s,
+    words: sortObj(s.words),
+    scores: sortObj(s.scores),
+    questions: sortObj(s.questions),
+    attempts: sortObj(s.attempts),
+  });
 }

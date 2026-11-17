@@ -1,0 +1,125 @@
+{
+  "id": "mau-01",
+  "title": "Đề mẫu (tự soạn để thử app)",
+  "minutes": 60,
+  "maxScore": 20,
+  "source": "tự soạn",
+  "sample": true,
+  "sections": [
+    {
+      "id": "s1",
+      "instruction": "Choose the word whose underlined part is pronounced differently from the others.",
+      "type": "pronunciation",
+      "points": 1,
+      "questions": [
+        { "id": "mau-01-s1-1", "prompt": "", "options": ["b<u>oo</u>k", "f<u>oo</u>d", "l<u>oo</u>k", "g<u>oo</u>d"], "answers": ["B"], "explanation": "food /uː/, các từ còn lại /ʊ/." },
+        { "id": "mau-01-s1-2", "prompt": "", "options": ["want<u>ed</u>", "need<u>ed</u>", "play<u>ed</u>", "decid<u>ed</u>"], "answers": ["C"], "explanation": "played đọc /d/; động từ tận cùng bằng t, d thì -ed đọc /ɪd/." }
+      ]
+    },
+    {
+      "id": "s2",
+      "instruction": "Choose the word whose main stress is placed differently from the others.",
+      "type": "stress",
+      "points": 1,
+      "questions": [
+        { "id": "mau-01-s2-1", "prompt": "", "options": ["happy", "polite", "table", "garden"], "answers": ["B"], "explanation": "po'lite nhấn âm 2, các từ còn lại nhấn âm 1." },
+        { "id": "mau-01-s2-2", "prompt": "", "options": ["computer", "department", "interesting", "decision"], "answers": ["C"], "explanation": "'interesting nhấn âm 1, các từ còn lại nhấn âm 2." }
+      ]
+    },
+    {
+      "id": "s3",
+      "instruction": "Choose the best answer A, B, C or D to complete each sentence.",
+      "type": "mcq",
+      "points": 3,
+      "questions": [
+        { "id": "mau-01-s3-1", "prompt": "If I ______ you, I would study harder.", "options": ["am", "was", "were", "be"], "answers": ["C"], "explanation": "Câu điều kiện loại 2: If + S + were…", "tags": ["conditionals"] },
+        { "id": "mau-01-s3-2", "prompt": "She has lived here ______ 2015.", "options": ["for", "since", "in", "from"], "answers": ["B"], "explanation": "since + mốc thời gian, dùng với thì hiện tại hoàn thành.", "tags": ["present-perfect"] },
+        { "id": "mau-01-s3-3", "prompt": "My brother is good ______ playing chess.", "options": ["in", "on", "at", "with"], "answers": ["C"], "explanation": "be good at + V-ing.", "tags": ["prepositions"] }
+      ]
+    },
+    {
+      "id": "s4",
+      "instruction": "Identify the underlined part that needs correcting, then correct it.",
+      "type": "error-id",
+      "points": 1,
+      "questions": [
+        { "id": "mau-01-s4-1", "prompt": "She <u>don't</u> like <u>playing</u> football <u>because</u> it is <u>too</u> tiring.", "options": ["don't", "playing", "because", "too"], "answers": ["A"], "fix": ["doesn't"], "explanation": "Chủ ngữ ngôi thứ ba số ít: She doesn't like…", "tags": ["present-simple"] }
+      ]
+    },
+    {
+      "id": "s5",
+      "instruction": "Give the correct form of the words in brackets.",
+      "type": "word-form",
+      "points": 2,
+      "questions": [
+        { "id": "mau-01-s5-1", "prompt": "The film was so ______ that we watched it twice. (INTEREST)", "answers": ["interesting"], "explanation": "Tính từ -ing mô tả tính chất của sự vật." },
+        { "id": "mau-01-s5-2", "prompt": "He drove ______ and had an accident. (CARE)", "answers": ["carelessly"], "explanation": "Cần trạng từ bổ nghĩa cho drove; nghĩa câu là bất cẩn: care → careless → carelessly." }
+      ]
+    },
+    {
+      "id": "s6",
+      "instruction": "Put the verbs in brackets into the correct tense or form.",
+      "type": "verb-form",
+      "points": 2,
+      "questions": [
+        { "id": "mau-01-s6-1", "prompt": "By the time we arrived, the train ______ (leave).", "answers": ["had left"], "explanation": "Hành động xảy ra trước một hành động khác trong quá khứ: quá khứ hoàn thành.", "tags": ["past-perfect"] },
+        { "id": "mau-01-s6-2", "prompt": "I'm looking forward to ______ (see) you soon.", "answers": ["seeing"], "explanation": "look forward to + V-ing.", "tags": ["gerund"] }
+      ]
+    },
+    {
+      "id": "s7",
+      "instruction": "Fill in each gap with a suitable preposition.",
+      "type": "preposition",
+      "points": 1,
+      "questions": [
+        { "id": "mau-01-s7-1", "prompt": "We are all very proud ______ our school team.", "answers": ["of"], "explanation": "be proud of." }
+      ]
+    },
+    {
+      "id": "s8",
+      "instruction": "Read the passage and fill in each numbered blank with ONE suitable word.",
+      "type": "cloze-open",
+      "points": 2,
+      "passage": "Tet is the most important festival (1) ______ Viet Nam. Before Tet, people clean and decorate their houses. Children usually (2) ______ lucky money from their grandparents.",
+      "questions": [
+        { "id": "mau-01-s8-1", "prompt": "(1)", "answers": ["in"] },
+        { "id": "mau-01-s8-2", "prompt": "(2)", "answers": ["get/ receive"] }
+      ]
+    },
+    {
+      "id": "s9",
+      "instruction": "Read the passage and decide whether the statements are True or False.",
+      "type": "reading",
+      "points": 2,
+      "passage": "Minh lives in a small village near Ha Long Bay. Every morning he cycles to school with his friends. His favourite subject is English because he wants to become a tour guide. At weekends, he helps his parents in their small restaurant.",
+      "questions": [
+        { "id": "mau-01-s9-1", "prompt": "Minh goes to school on foot.", "options": ["True", "False"], "answers": ["B"], "explanation": "He cycles to school." },
+        { "id": "mau-01-s9-2", "prompt": "Minh wants to work in tourism.", "options": ["True", "False"], "answers": ["A"], "explanation": "He wants to become a tour guide." }
+      ]
+    },
+    {
+      "id": "s10",
+      "instruction": "Rewrite each sentence so that it means the same as the first one, beginning with the given words.",
+      "type": "transform",
+      "points": 2,
+      "questions": [
+        { "id": "mau-01-s10-1", "prompt": "This is the first time I have visited Hue.", "lead": "I have never", "answers": ["I have never visited Hue before"], "tags": ["present-perfect"] },
+        { "id": "mau-01-s10-2", "prompt": "\"I am tired,\" she said.", "lead": "She said", "answers": ["She said (that) she was tired"], "tags": ["reported-speech"] }
+      ]
+    },
+    {
+      "id": "s11",
+      "instruction": "Write a paragraph of about 100–120 words.",
+      "type": "writing",
+      "points": 3,
+      "questions": [
+        {
+          "id": "mau-01-s11-1",
+          "prompt": "Write about your favourite hobby.",
+          "answers": [],
+          "sample": "My favourite hobby is reading books. I started reading when I was seven, and now I read almost every evening before bed. I enjoy adventure stories and books about science the most. Reading helps me learn many new words, so it is very useful for my English. It also takes me to different places and times without leaving my room. When I feel stressed after school, a good book always helps me relax. Every month, I save some pocket money to buy a new book, and I often swap books with my friends. In the future, I hope to write a story of my own."
+        }
+      ]
+    }
+  ]
+}

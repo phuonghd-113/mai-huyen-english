@@ -1,10 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import type { ExamAttempt, QuestionProgress } from '../types/exam';
 import type { ProgressState, ScopeScore, Settings, VocabItem, WordProgress, WordStatus } from '../types/vocab';
 import { api, ApiError, loadAccount, OfflineError, saveAccount, type Account } from './api';
+import { applyAnswer } from './srs';
 import { emptyState, mergeStates, sanitizeState, stateKey } from './state';
 
 export { sanitizeState } from './state';
 
+// the key name predates state version 2; it stays so saved progress is found (sanitizeState upgrades the data)
 const KEY = 'b1vocab:v1';
 const PUSH_DELAY = 1500;
 
@@ -46,6 +49,11 @@ interface ProgressApi {
   toggleStar: (id: string) => void;
   recordAnswer: (id: string, correct: boolean) => void;
   updateScore: (scope: string, patch: (prev: ScopeScore) => ScopeScore) => void;
+  /** exam question answered in practice, review or a submitted paper */
+  recordQuestion: (id: string, correct: boolean) => void;
+  getQuestion: (id: string) => QuestionProgress | undefined;
+  /** create or update one sitting of a paper (answers, timer, submit) */
+  saveAttempt: (attempt: Omit<ExamAttempt, 't'>) => void;
   touchUnit: (unitId: string) => void;
   updateSettings: (patch: Partial<Settings>) => void;
   replaceAll: (next: ProgressState) => void;
@@ -263,6 +271,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           ...s,
           scores: { ...s.scores, [scope]: { ...fn(s.scores[scope] ?? {}), lastStudied: new Date().toISOString() } },
         })),
+      recordQuestion: (id, correct) =>
+        mutate((s) => ({ ...s, questions: { ...s.questions, [id]: applyAnswer(s.questions[id] ?? {}, correct, Date.now()) } })),
+      getQuestion: (id) => state.questions[id],
+      saveAttempt: (attempt) => mutate((s) => ({ ...s, attempts: { ...s.attempts, [attempt.id]: { ...attempt, t: Date.now() } } })),
       touchUnit: (unitId) => mutate((s) => (s.lastUnitId === unitId ? s : { ...s, lastUnitId: unitId, lastUnitAt: Date.now() })),
       updateSettings: (patch) => mutate((s) => ({ ...s, settings: { ...s.settings, ...patch }, settingsAt: Date.now() })),
       replaceAll: (next) =>
@@ -272,7 +284,9 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           const clean = sanitizeState(next);
           const words = Object.fromEntries(Object.entries(clean.words).map(([id, w]) => [id, { ...w, t: now }]));
           const scores = Object.fromEntries(Object.entries(clean.scores).map(([k, v]) => [k, { ...v, lastStudied: new Date(now).toISOString() }]));
-          return { ...clean, words, scores, resetAt: now - 1, settingsAt: now, lastUnitAt: now };
+          const questions = Object.fromEntries(Object.entries(clean.questions).map(([id, q]) => [id, { ...q, t: now }]));
+          const attempts = Object.fromEntries(Object.entries(clean.attempts).map(([id, a]) => [id, { ...a, t: now }]));
+          return { ...clean, words, scores, questions, attempts, resetAt: now - 1, settingsAt: now, lastUnitAt: now };
         }),
       reset: () => mutate((s) => ({ ...emptyState(), settings: s.settings, settingsAt: s.settingsAt, resetAt: Date.now() })),
       masteredCount: (words) => words.reduce((n, w) => n + (state.words[w.id]?.status === 'mastered' ? 1 : 0), 0),

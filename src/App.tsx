@@ -3,6 +3,7 @@ import { EmptyState } from './components/common';
 import { UNIT_BY_ID } from './data';
 import { ProgressProvider } from './lib/progress';
 import { href, useRoute } from './lib/router';
+import { ComingSoon } from './pages/ComingSoon';
 import { Dashboard } from './pages/Dashboard';
 import { ReviewPage } from './pages/ReviewPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -45,6 +46,23 @@ function Routes() {
       break;
     case 'settings':
       page = <SettingsPage />;
+      break;
+    case 'exams':
+    case 'exam':
+    case 'exam-review':
+      page = <ComingSoon title="Thi thử" />;
+      break;
+    case 'practice':
+      page = <ComingSoon title="Luyện theo dạng" />;
+      break;
+    case 'mistakes':
+      page = <ComingSoon title="Sổ lỗi sai" />;
+      break;
+    case 'stats':
+      page = <ComingSoon title="Thống kê" />;
+      break;
+    case 'admin-exam':
+      page = <ComingSoon title="Xem trước đề" />;
       break;
     default:
       page = <NotFound />;

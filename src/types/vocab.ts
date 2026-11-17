@@ -1,3 +1,5 @@
+import type { ExamAttempt, QuestionProgress } from './exam';
+
 export type VocabCategory = 'word' | 'phrasal-verb' | 'phrase';
 
 /** [id, term, pos, ipa, meaning, category, note?] — compact form stored in src/data/units.ts */
@@ -63,9 +65,14 @@ export interface Settings {
 }
 
 export interface ProgressState {
-  version: 1;
+  /** 1: vocabulary only. 2: adds exam questions and attempts (v1 data loads as v2 with them empty) */
+  version: 2;
   words: Record<string, WordProgress>;
   scores: Record<string, ScopeScore>;
+  /** exam question id → progress (practice, mistakes notebook, SRS) */
+  questions: Record<string, QuestionProgress>;
+  /** attempt id → one sitting of an exam paper, finished or not */
+  attempts: Record<string, ExamAttempt>;
   settings: Settings;
   lastUnitId?: string;
   /** "Xóa tiến độ" time: anything older is dropped when devices merge */

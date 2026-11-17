@@ -32,7 +32,7 @@ interface UserRecord {
 const TOKEN_DAYS = 180;
 const MAX_FAILS = 8;
 const LOCK_MS = 10 * 60 * 1000;
-const MAX_BODY = 512 * 1024;
+const MAX_BODY = 1024 * 1024; // progress incl. exam attempts (capped at MAX_ATTEMPTS in state.ts)
 const USERNAME_RE = /^[a-z0-9][a-z0-9._-]{2,23}$/;
 const SCRYPT = { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 };
 
