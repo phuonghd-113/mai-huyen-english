@@ -1,4 +1,4 @@
-import { ArrowLeft, ClipboardList, Flame, House, LibraryBig, NotebookPen, PencilLine, Settings } from 'lucide-react';
+import { ArrowLeft, ChartColumn, ClipboardList, Flame, House, LibraryBig, NotebookPen, PencilLine, Settings } from 'lucide-react';
 import { useMemo, type ReactNode } from 'react';
 import { ALL_WORDS, UNITS } from '../data';
 import { isHard, useProgress } from '../lib/progress';
@@ -54,6 +54,9 @@ function Sidebar({ route }: { route: Route }) {
           <NotebookPen className="h-[18px] w-[18px]" /> Sổ lỗi sai
           {due > 0 && <span className="ml-auto rounded-full bg-orange-100 px-2 py-0.5 text-[13px] font-semibold tabular text-orange-800">{due}</span>}
         </a>
+        <a href={href.stats()} className={navItem(route.name === 'stats')}>
+          <ChartColumn className="h-[18px] w-[18px]" /> Thống kê
+        </a>
         <a href={href.review()} className={navItem(route.name === 'review')}>
           <Flame className="h-[18px] w-[18px]" /> Ôn tập từ khó
           {hard > 0 && <span className="ml-auto rounded-full bg-orange-100 px-2 py-0.5 text-[13px] font-semibold tabular text-orange-800">{hard}</span>}
@@ -98,7 +101,7 @@ function BottomNav({ route }: { route: Route }) {
       <a href={href.exams()} className={item(isExamRoute(route))}>
         <ClipboardList className="h-5 w-5" /> Thi thử
       </a>
-      <a href={href.practice()} className={item(route.name === 'practice' || route.name === 'mistakes' || route.name === 'review')}>
+      <a href={href.practice()} className={item(route.name === 'practice' || route.name === 'mistakes' || route.name === 'review' || route.name === 'stats')}>
         <PencilLine className="h-5 w-5" /> Luyện tập
         {due > 0 && <span className="absolute right-[calc(50%-22px)] top-1 rounded-full bg-orange-600 px-1.5 text-[11px] font-semibold leading-4 text-white">{due > 99 ? '99+' : due}</span>}
       </a>

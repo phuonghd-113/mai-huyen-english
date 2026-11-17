@@ -4,7 +4,8 @@ import { handle, memoryKV, signToken, verifyToken, type Env } from '../server/co
 import { emptyState, MAX_ATTEMPTS, mergeStates, sanitizeState } from '../src/lib/state.ts';
 import { applyAnswer, isDue, SRS_DAYS } from '../src/lib/srs.ts';
 import { dueQuestions, pickPractice, queuedQuestions, typeStats } from '../src/lib/practice.ts';
-import type { BankQuestion } from '../src/types/exam.ts';
+import { chartScale, scoreHistory, totals, typeAccuracy, weakestTypes } from '../src/lib/stats.ts';
+import type { BankQuestion, Exam } from '../src/types/exam.ts';
 
 const SECRET = 'x'.repeat(40);
 let clock = Date.UTC(2026, 10, 12);
@@ -237,6 +238,35 @@ await test('sổ lỗi sai: câu sai vào sổ, đến hạn sau 1 ngày, sắp 
   assert.deepEqual(dueQuestions(bank, progress, day).map((q) => q.id), ['vf-1']);
   const st = typeStats(bank, progress).find((x) => x.type === 'word-form')!;
   assert.deepEqual([st.total, st.seen, st.right, st.wrong], [3, 2, 1, 1]);
+});
+
+// ---- stats
+await test('thống kê: tỉ lệ đúng theo dạng, dạng yếu nhất trước, chưa đủ 5 lượt thì không xếp hạng', () => {
+  const progress = { 'wf-1': { right: 1, wrong: 3 }, 'wf-2': { right: 1 }, 'vf-1': { right: 4, wrong: 1 } };
+  const acc = typeAccuracy(bank, progress);
+  assert.deepEqual(acc.map((a) => [a.type, a.rate]), [['word-form', 0.4], ['verb-form', 0.8]]);
+  assert.deepEqual(weakestTypes(acc).map((a) => a.type), ['word-form'], 'đúng từ 80% trở lên không bị coi là yếu');
+  const few = typeAccuracy(bank, { 'wf-1': { wrong: 2 } });
+  assert.equal(few.find((a) => a.type === 'word-form')!.rate, undefined);
+  assert.deepEqual(weakestTypes(few), []);
+});
+
+await test('thống kê: lịch sử điểm chỉ gồm bài đã nộp, theo thứ tự nộp, chấm lại theo đề hiện tại', () => {
+  const exam: Exam = { id: 'e', title: 'Đề', minutes: 10, maxScore: 10, source: 'x', sections: [{ id: 's1', instruction: '', type: 'word-form', points: 10, questions: [{ id: 'e-s1-1', prompt: '', answers: ['a'] }, { id: 'e-s1-2', prompt: '', answers: ['b'] }] }] };
+  const at = (id: string, submittedAt: number | undefined, answers: Record<string, string>, extra = {}) => ({ id, examId: 'e', startedAt: 1, submittedAt, answers, t: 1, ...extra });
+  const pts = scoreHistory([exam], {
+    late: at('late', 300, { 'e-s1-1': 'a', 'e-s1-2': 'b' }),
+    early: at('early', 100, { 'e-s1-1': 'a' }, { score: 99 }),
+    open: at('open', undefined, {}),
+    gone: at('gone', 200, {}, { abandoned: true }),
+    other: { ...at('other', 150, {}), examId: 'deleted' },
+  });
+  assert.deepEqual(pts.map((p) => [p.attemptId, p.score, p.ratio]), [['early', 5, 0.5], ['late', 10, 1]]);
+  assert.equal(chartScale(pts), 10);
+  assert.equal(chartScale([...pts, { ...pts[0], max: 20 }]), 10);
+  assert.equal(chartScale([{ ...pts[0], max: 20 }]), 20);
+  const t = totals(pts, { a: { right: 2, wrong: 1, srs: { due: 5, step: 0 } }, b: { right: 1 }, c: {} }, 10);
+  assert.deepEqual([t.examsDone, t.questionsSeen, t.answers, t.right, t.inNotebook, t.dueNow], [2, 2, 4, 3, 1, 1]);
 });
 
 console.log(`\n${passed} test đều qua`);

@@ -1,7 +1,8 @@
-import { ArrowRight, ClipboardList, Search, X } from 'lucide-react';
+import { ArrowRight, Search, X } from 'lucide-react';
 import { useDeferredValue, useMemo, useState } from 'react';
 import { Card, PosTag, ProgressBar, SpeakButton, StarButton } from '../components/common';
 import { MobileHeader } from '../components/Layout';
+import { Today } from '../components/stats/Today';
 import { UnitCard } from '../components/UnitCard';
 import { ALL_WORDS, UNIT_BY_ID, UNITS } from '../data';
 import { isHard, useProgress } from '../lib/progress';
@@ -130,16 +131,9 @@ export function Dashboard() {
           </div>
         </section>
 
-        <section className="mt-10 md:mt-14">
-          <a href={href.exams()} className="lift flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
-            <ClipboardList className="h-8 w-8 shrink-0 text-indigo-600" aria-hidden />
-            <span className="min-w-0 flex-1">
-              <span className="block font-display text-[19px] font-semibold text-slate-900">Thi thử HSG lớp 8</span>
-              <span className="block text-[15px] text-slate-600">Làm trọn đề có tính giờ, nộp bài xem điểm và đáp án từng câu.</span>
-            </span>
-            <ArrowRight className="h-5 w-5 shrink-0 text-slate-400" />
-          </a>
-        </section>
+        <div className="mt-10 md:mt-14">
+          <Today />
+        </div>
 
         <section className="mt-10 md:mt-14" aria-label="Tra từ">
           <GlobalSearch />

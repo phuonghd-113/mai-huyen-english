@@ -10,6 +10,7 @@ import { ExamReviewPage } from './pages/ExamReviewPage';
 import { ExamsPage } from './pages/ExamsPage';
 import { MistakesPage } from './pages/MistakesPage';
 import { PracticePage } from './pages/PracticePage';
+import { StatsPage } from './pages/StatsPage';
 import { ReviewPage } from './pages/ReviewPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { UnitPage } from './pages/UnitPage';
@@ -68,7 +69,7 @@ function Routes() {
       page = <MistakesPage />;
       break;
     case 'stats':
-      page = <ComingSoon title="Thống kê" />;
+      page = <StatsPage />;
       break;
     case 'admin-exam':
       page = <ComingSoon title="Xem trước đề" />;

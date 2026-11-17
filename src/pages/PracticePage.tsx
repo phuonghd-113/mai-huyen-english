@@ -63,7 +63,12 @@ function Hub({ bank }: { bank: BankQuestion[] }) {
         </a>
       </div>
 
-      <h2 className="mt-10 text-2xl text-slate-900">Theo dạng bài</h2>
+      <div className="mt-10 flex items-baseline justify-between gap-3">
+        <h2 className="text-2xl text-slate-900">Theo dạng bài</h2>
+        <a href={href.stats()} className="text-[15px] font-semibold text-indigo-700">
+          Xem thống kê
+        </a>
+      </div>
       {stats.length === 0 ? (
         <div className="mt-4">
           <EmptyState icon={<NotebookPen className="h-12 w-12" />} title="Chưa có câu hỏi">
