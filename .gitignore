@@ -6,3 +6,5 @@ dist
 .dev-data
 .netlify
 .agents
+# exam papers (originals): personal use only, never committed
+de-thi/

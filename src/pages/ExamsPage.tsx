@@ -41,7 +41,10 @@ export function ExamsPage() {
             ) : (
               <div className="mt-6 grid gap-3">
                 {loaded.data.map((e) => (
-                  <ExamCard key={e.id} exam={e} state={state} />
+                  <div key={e.id}>
+                    <ExamCard exam={e} state={state} />
+                    <DevPreviewLink examId={e.id} />
+                  </div>
                 ))}
               </div>
             )}
@@ -97,6 +100,16 @@ function ExamCard({ exam, state }: { exam: Exam; state: ProgressState }) {
         </span>
       </div>
       {unfinished && <p className="mt-2 text-[14px] text-slate-500">Bài đang dở, còn {formatClock(unfinished.remainingMs ?? 0)}.</p>}
+    </a>
+  );
+}
+
+/** npm run dev only: proofread an imported paper. */
+function DevPreviewLink({ examId }: { examId: string }) {
+  if (!import.meta.env.DEV) return null;
+  return (
+    <a href={href.adminExam(examId)} className="mt-1 inline-block px-1 text-[13px] font-medium text-amber-800 hover:underline">
+      Xem trước đề (dev)
     </a>
   );
 }

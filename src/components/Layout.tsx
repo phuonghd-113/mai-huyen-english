@@ -5,6 +5,7 @@ import { isHard, useProgress } from '../lib/progress';
 import { href, type Route } from '../lib/router';
 import { cx } from '../lib/ui';
 import { SyncDot, syncLabel } from './AccountPanel';
+import { UpdatePrompt } from './UpdatePrompt';
 import { ProgressBar } from './common';
 
 const isExamRoute = (r: Route) => r.name === 'exams' || r.name === 'exam' || r.name === 'exam-review';
@@ -143,6 +144,7 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
         {children}
       </div>
       <BottomNav route={route} />
+      <UpdatePrompt />
     </div>
   );
 }

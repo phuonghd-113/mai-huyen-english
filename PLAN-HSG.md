@@ -124,6 +124,17 @@ file đề (.docx / .pdf)
 
 **Trang xem trước** (`#/admin/exam/<id>`, chỉ chạy với `npm run dev`): hiện đề đã import cạnh danh sách cảnh báo, để soát nhanh trước khi commit.
 
+**Cách dùng (đã làm):**
+```bash
+# đặt file đề vào de-thi/ (đã nằm trong .gitignore, không bị commit)
+npm run import:exam -- de-thi/de-2024.docx --id hsg8-2024-huyen-x --level huyen [--key de-thi/dap-an.docx] [--minutes 120] [--max 20]
+npm run dev        # mở #/exams → "Xem trước đề (dev)" để soát từng câu với đáp án
+npm run check:data # kiểm tra lại sau khi sửa JSON bằng tay
+```
+- Đọc được `.docx` (giữ gạch chân, đánh số tự động của Word, lựa chọn trong bảng) và `.txt`. **Chưa đọc PDF**: mở PDF bằng Word rồi lưu thành `.docx`.
+- `npm run test:import` chạy bộ phân tích trên đề thử `scripts/fixtures/de-thu.{txt,docx}` và các kiểu trình bày hay gặp.
+- Còn lại: chỉnh bộ nhận diện theo 2–3 đề thật của bạn.
+
 **`check:data` mở rộng:**
 - id không trùng.
 - Câu `mcq` có đáp án nằm trong `options`.
@@ -184,11 +195,11 @@ Thanh dưới trên mobile và sidebar trên desktop gồm 5 mục: **Trang ch�
 | # | Giai đoạn | Việc chính | Xong khi |
 |---|---|---|---|
 | 1 | ✅ **Nền tảng** | Kiểu `Exam`/`Question`, `grade.ts`, tiến độ v2 và migrate, router mới, `check:data` cho đề | Build và test chạy; tiến độ cũ còn nguyên |
-| 2 | **Import** | `npm run import:exam` cho .docx, rồi .pdf; ghép đáp án; trang xem trước | Import được 2–3 đề thật, chỉ còn ít cảnh báo |
+| 2 | ½ **Import** | `npm run import:exam` cho .docx, rồi .pdf; ghép đáp án; trang xem trước | Import được 2–3 đề thật, chỉ còn ít cảnh báo |
 | 3 | ✅ **Thi thử** | Giao diện cho từng dạng bài, đồng hồ, lưu bài đang làm, chấm điểm, xem lại, tự chấm phần viết | Làm trọn được một đề thật |
 | 4 | ✅ **Luyện tập và sổ lỗi** | Luyện theo dạng, sổ lỗi sai, SRS chung cho câu hỏi và từ vựng | Câu sai tự quay lại đúng lịch |
 | 5 | ✅ **Thống kê** | Biểu đồ điểm, tỉ lệ đúng theo dạng, mục "Hôm nay" | Biết dạng nào yếu và luyện được ngay |
-| 6 | **Hoàn thiện** | PWA để làm bài offline; thêm giải thích cho những câu hay sai | |
+| 6 | ½ **Hoàn thiện** | ✅ PWA để làm bài offline (hỏi trước khi cập nhật). Còn: thêm giải thích cho những câu hay sai (cần đề thật) | |
 
 Giai đoạn 2 phụ thuộc vào **file đề thật**. Nên có vài file mẫu ngay từ đầu để thiết kế script nhận diện cho sát.
 

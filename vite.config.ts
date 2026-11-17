@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { handle, memoryKV } from './server/core.ts';
 
@@ -48,5 +49,47 @@ function devApi(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), devApi()],
+  plugins: [
+    react(),
+    devApi(),
+    // Offline: the app shell and every exam paper are precached; progress already lives in localStorage
+    // and syncs when the network returns. A new version waits for the student to tap "Cập nhật",
+    // so a paper in progress is never reloaded under them.
+    VitePWA({
+      registerType: 'prompt',
+      manifest: {
+        name: 'Ôn thi HSG tiếng Anh 8',
+        short_name: 'Ôn HSG Anh 8',
+        description: 'Thi thử, luyện theo dạng bài, sổ lỗi sai và từ vựng Destination B1.',
+        lang: 'vi',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#f7f9fa',
+        theme_color: '#f7f9fa',
+        icons: [
+          { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png}'],
+        // take control of the page on first install, so a later update can reload it (skipWaiting stays manual)
+        clientsClaim: true,
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.origin === 'https://fonts.googleapis.com',
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'google-fonts-css' },
+          },
+          {
+            urlPattern: ({ url }) => url.origin === 'https://fonts.gstatic.com',
+            handler: 'CacheFirst',
+            options: { cacheName: 'google-fonts', expiration: { maxEntries: 20, maxAgeSeconds: 365 * 86400 }, cacheableResponse: { statuses: [0, 200] } },
+          },
+        ],
+      },
+    }),
+  ],
 });

@@ -3,7 +3,7 @@ import { EmptyState } from './components/common';
 import { UNIT_BY_ID } from './data';
 import { ProgressProvider } from './lib/progress';
 import { href, useRoute } from './lib/router';
-import { ComingSoon } from './pages/ComingSoon';
+import { AdminExamPage } from './pages/AdminExamPage';
 import { Dashboard } from './pages/Dashboard';
 import { ExamPage } from './pages/ExamPage';
 import { ExamReviewPage } from './pages/ExamReviewPage';
@@ -72,7 +72,7 @@ function Routes() {
       page = <StatsPage />;
       break;
     case 'admin-exam':
-      page = <ComingSoon title="Xem trước đề" />;
+      page = <AdminExamPage key={route.examId} examId={route.examId} />;
       break;
     default:
       page = <NotFound />;
