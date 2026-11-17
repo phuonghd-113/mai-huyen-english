@@ -8,6 +8,8 @@ import { Dashboard } from './pages/Dashboard';
 import { ExamPage } from './pages/ExamPage';
 import { ExamReviewPage } from './pages/ExamReviewPage';
 import { ExamsPage } from './pages/ExamsPage';
+import { MistakesPage } from './pages/MistakesPage';
+import { PracticePage } from './pages/PracticePage';
 import { ReviewPage } from './pages/ReviewPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { UnitPage } from './pages/UnitPage';
@@ -60,10 +62,10 @@ function Routes() {
       page = <ExamReviewPage key={route.attemptId} examId={route.examId} attemptId={route.attemptId} />;
       break;
     case 'practice':
-      page = <ComingSoon title="Luyện theo dạng" />;
+      page = <PracticePage key={route.type ?? 'hub'} type={route.type} />;
       break;
     case 'mistakes':
-      page = <ComingSoon title="Sổ lỗi sai" />;
+      page = <MistakesPage />;
       break;
     case 'stats':
       page = <ComingSoon title="Thống kê" />;

@@ -8,7 +8,8 @@ import { RichText } from './RichText';
 interface Props {
   q: Question;
   type: QuestionType;
-  number: number;
+  /** shown before the question; left out in practice, where the progress bar already counts */
+  number?: number;
   answers: Record<string, string>;
   /** absent in review */
   onAnswer?: (key: string, value: string) => void;
@@ -31,21 +32,23 @@ export function QuestionView({ q, type, number, answers, onAnswer, flagged, onFl
   return (
     <div id={`q-${q.id}`} className="scroll-mt-28 py-4">
       <div className="flex items-start gap-2">
-        <div className="flex w-8 shrink-0 flex-col items-start gap-1">
-          <span className="mt-0.5 font-display text-[17px] font-semibold tabular-nums text-slate-500">{number}.</span>
-          {onFlag && (
-            <button
-              type="button"
-              onClick={onFlag}
-              aria-pressed={flagged}
-              aria-label={flagged ? 'Bỏ đánh dấu xem lại' : 'Đánh dấu để xem lại'}
-              title="Đánh dấu để xem lại"
-              className={cx('-ml-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors', flagged ? 'bg-amber-100 text-amber-700' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600')}
-            >
-              <Flag className="h-[18px] w-[18px]" fill={flagged ? 'currentColor' : 'none'} />
-            </button>
-          )}
-        </div>
+        {(number !== undefined || onFlag) && (
+          <div className="flex w-8 shrink-0 flex-col items-start gap-1">
+            {number !== undefined && <span className="mt-0.5 font-display text-[17px] font-semibold tabular-nums text-slate-500">{number}.</span>}
+            {onFlag && (
+              <button
+                type="button"
+                onClick={onFlag}
+                aria-pressed={flagged}
+                aria-label={flagged ? 'Bỏ đánh dấu xem lại' : 'Đánh dấu để xem lại'}
+                title="Đánh dấu để xem lại"
+                className={cx('-ml-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors', flagged ? 'bg-amber-100 text-amber-700' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600')}
+              >
+                <Flag className="h-[18px] w-[18px]" fill={flagged ? 'currentColor' : 'none'} />
+              </button>
+            )}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           {q.prompt && <RichText text={q.prompt} letterParts={type === 'error-id'} className="block text-[17px] leading-relaxed text-slate-900" />}
           <div className={cx(q.prompt && 'mt-3')}>

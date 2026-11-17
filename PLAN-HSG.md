@@ -150,7 +150,7 @@ file đề (.docx / .pdf)
 ### 5.3 Sổ lỗi sai (`#/mistakes`)
 - Câu sai trong thi thử hoặc luyện tập đều vào sổ.
 - Ôn theo SRS: đúng thì giãn lịch ôn (1 → 3 → 7 → 14 ngày), sai thì quay về 1 ngày.
-- Áp dụng chung cho từ vựng B1: từ khó cũng có lịch ôn.
+- Từ vựng B1 chưa dùng lịch ôn này: vẫn ôn qua mục "Ôn tập từ khó" như cũ (để sau, vì cần đổi cách tính "từ khó" ở mọi chế độ học từ).
 
 ### 5.4 Thống kê (`#/stats`)
 - Biểu đồ điểm các lần thi thử theo thời gian.
@@ -186,7 +186,7 @@ Thanh dưới trên mobile và sidebar trên desktop gồm 5 mục: **Trang ch�
 | 1 | ✅ **Nền tảng** | Kiểu `Exam`/`Question`, `grade.ts`, tiến độ v2 và migrate, router mới, `check:data` cho đề | Build và test chạy; tiến độ cũ còn nguyên |
 | 2 | **Import** | `npm run import:exam` cho .docx, rồi .pdf; ghép đáp án; trang xem trước | Import được 2–3 đề thật, chỉ còn ít cảnh báo |
 | 3 | ✅ **Thi thử** | Giao diện cho từng dạng bài, đồng hồ, lưu bài đang làm, chấm điểm, xem lại, tự chấm phần viết | Làm trọn được một đề thật |
-| 4 | **Luyện tập và sổ lỗi** | Luyện theo dạng, sổ lỗi sai, SRS chung cho câu hỏi và từ vựng | Câu sai tự quay lại đúng lịch |
+| 4 | ✅ **Luyện tập và sổ lỗi** | Luyện theo dạng, sổ lỗi sai, SRS chung cho câu hỏi và từ vựng | Câu sai tự quay lại đúng lịch |
 | 5 | **Thống kê** | Biểu đồ điểm, tỉ lệ đúng theo dạng, mục "Hôm nay" | Biết dạng nào yếu và luyện được ngay |
 | 6 | **Hoàn thiện** | PWA để làm bài offline; thêm giải thích cho những câu hay sai | |
 

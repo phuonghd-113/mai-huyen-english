@@ -1,6 +1,6 @@
 // Hooks and small helpers shared by the exam pages.
 import { useEffect, useState } from 'react';
-import { loadAllExams, loadExam } from '../data/exams';
+import { loadAllExams, loadBank, loadExam } from '../data/exams';
 import type { Exam, ExamAttempt } from '../types/exam';
 import type { ProgressState } from '../types/vocab';
 import { scoreExam, type ExamResult } from './grade';
@@ -25,6 +25,7 @@ function useLoad<T>(load: () => Promise<T>, key: string): Loaded<T> {
 
 export const useExam = (id: string) => useLoad(() => loadExam(id), id);
 export const useAllExams = () => useLoad(loadAllExams, 'all');
+export const useBank = () => useLoad(loadBank, 'bank');
 
 /** Key under which an error-id correction is stored next to the chosen letter. */
 export const fixKey = (questionId: string) => `${questionId}-fix`;

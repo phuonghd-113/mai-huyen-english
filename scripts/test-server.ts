@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { handle, memoryKV, signToken, verifyToken, type Env } from '../server/core.ts';
 import { emptyState, MAX_ATTEMPTS, mergeStates, sanitizeState } from '../src/lib/state.ts';
 import { applyAnswer, isDue, SRS_DAYS } from '../src/lib/srs.ts';
+import { dueQuestions, pickPractice, queuedQuestions, typeStats } from '../src/lib/practice.ts';
+import type { BankQuestion } from '../src/types/exam.ts';
 
 const SECRET = 'x'.repeat(40);
 let clock = Date.UTC(2026, 10, 12);
@@ -205,6 +207,36 @@ await test('lặp lại ngắt quãng: sai → ôn sau 1 ngày, đúng liên ti�
   p = applyAnswer(p, true, 0);
   assert.equal(p.srs, undefined, 'đúng đủ các mốc thì ra khỏi hàng ôn');
   assert.deepEqual([p.right, p.wrong], [SRS_DAYS.length + 1, 1]);
+});
+
+// ---- practice by type and the mistakes notebook
+const bq = (id: string, type: BankQuestion['type'], answers = ['x']): BankQuestion => ({ id, type, prompt: id, answers, examId: 'e', sectionId: 's1', instruction: '' });
+const bank: BankQuestion[] = [
+  bq('wf-1', 'word-form'),
+  bq('wf-2', 'word-form'),
+  bq('wf-3', 'word-form'),
+  bq('wf-4', 'word-form', []), // no key
+  bq('wr-1', 'writing', []),
+  bq('vf-1', 'verb-form'),
+];
+
+await test('luyện theo dạng: đúng dạng, bỏ câu không có đáp án, ưu tiên câu chưa làm rồi câu hay sai', () => {
+  const progress = { 'wf-1': { right: 5, t: 1 }, 'wf-2': { wrong: 3, right: 1, missed: true, t: 1 } };
+  for (let i = 0; i < 200; i++) {
+    const got = pickPractice(bank, progress, 'word-form', 3).map((q) => q.id);
+    assert.deepEqual(got, ['wf-3', 'wf-2', 'wf-1']);
+  }
+  assert.deepEqual(pickPractice(bank, {}, 'writing', 5), []);
+  assert.equal(pickPractice(bank, {}, 'word-form', 10).length, 3);
+});
+
+await test('sổ lỗi sai: câu sai vào sổ, đến hạn sau 1 ngày, sắp theo hạn ôn', () => {
+  const day = 86_400_000;
+  const progress = { 'wf-1': applyAnswer({}, false, 2 * day), 'vf-1': applyAnswer({}, false, 0), 'wf-3': applyAnswer({}, true, 0) };
+  assert.deepEqual(queuedQuestions(bank, progress).map((q) => q.id), ['vf-1', 'wf-1']);
+  assert.deepEqual(dueQuestions(bank, progress, day).map((q) => q.id), ['vf-1']);
+  const st = typeStats(bank, progress).find((x) => x.type === 'word-form')!;
+  assert.deepEqual([st.total, st.seen, st.right, st.wrong], [3, 2, 1, 1]);
 });
 
 console.log(`\n${passed} test đều qua`);

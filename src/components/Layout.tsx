@@ -1,4 +1,4 @@
-import { ArrowLeft, ClipboardList, Flame, House, LibraryBig, Settings } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Flame, House, LibraryBig, NotebookPen, PencilLine, Settings } from 'lucide-react';
 import { useMemo, type ReactNode } from 'react';
 import { ALL_WORDS, UNITS } from '../data';
 import { isHard, useProgress } from '../lib/progress';
@@ -9,6 +9,15 @@ import { ProgressBar } from './common';
 
 const isExamRoute = (r: Route) => r.name === 'exams' || r.name === 'exam' || r.name === 'exam-review';
 
+/** Mistakes due for review; counted from progress alone so the badge does not load the papers. */
+function useDueCount() {
+  const { state } = useProgress();
+  return useMemo(() => {
+    const now = Date.now();
+    return Object.values(state.questions).filter((q) => q.srs && q.srs.due <= now).length;
+  }, [state.questions]);
+}
+
 function useHardCount() {
   const { state } = useProgress();
   return useMemo(() => ALL_WORDS.filter((w) => isHard(state.words[w.id])).length, [state.words]);
@@ -17,6 +26,7 @@ function useHardCount() {
 function Sidebar({ route }: { route: Route }) {
   const { masteredCount, sync } = useProgress();
   const hard = useHardCount();
+  const due = useDueCount();
   const activeUnit = route.name === 'unit' ? route.unitId : null;
   const navItem = (active: boolean) =>
     cx('flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition-colors', active ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-slate-100');
@@ -36,6 +46,13 @@ function Sidebar({ route }: { route: Route }) {
         </a>
         <a href={href.exams()} className={navItem(isExamRoute(route))}>
           <ClipboardList className="h-[18px] w-[18px]" /> Thi thử
+        </a>
+        <a href={href.practice()} className={navItem(route.name === 'practice')}>
+          <PencilLine className="h-[18px] w-[18px]" /> Luyện theo dạng
+        </a>
+        <a href={href.mistakes()} className={navItem(route.name === 'mistakes')}>
+          <NotebookPen className="h-[18px] w-[18px]" /> Sổ lỗi sai
+          {due > 0 && <span className="ml-auto rounded-full bg-orange-100 px-2 py-0.5 text-[13px] font-semibold tabular text-orange-800">{due}</span>}
         </a>
         <a href={href.review()} className={navItem(route.name === 'review')}>
           <Flame className="h-[18px] w-[18px]" /> Ôn tập từ khó
@@ -71,7 +88,7 @@ function Sidebar({ route }: { route: Route }) {
 }
 
 function BottomNav({ route }: { route: Route }) {
-  const hard = useHardCount();
+  const due = useDueCount();
   const item = (active: boolean) => cx('relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[13px] font-medium', active ? 'text-slate-900' : 'text-slate-500');
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden" aria-label="Điều hướng chính">
@@ -81,12 +98,12 @@ function BottomNav({ route }: { route: Route }) {
       <a href={href.exams()} className={item(isExamRoute(route))}>
         <ClipboardList className="h-5 w-5" /> Thi thử
       </a>
+      <a href={href.practice()} className={item(route.name === 'practice' || route.name === 'mistakes' || route.name === 'review')}>
+        <PencilLine className="h-5 w-5" /> Luyện tập
+        {due > 0 && <span className="absolute right-[calc(50%-22px)] top-1 rounded-full bg-orange-600 px-1.5 text-[11px] font-semibold leading-4 text-white">{due > 99 ? '99+' : due}</span>}
+      </a>
       <a href={href.units()} className={item(route.name === 'units' || route.name === 'unit')}>
         <LibraryBig className="h-5 w-5" /> Unit
-      </a>
-      <a href={href.review()} className={item(route.name === 'review')}>
-        <Flame className="h-5 w-5" /> Ôn tập
-        {hard > 0 && <span className="absolute right-[calc(50%-22px)] top-1 rounded-full bg-orange-600 px-1.5 text-[11px] font-semibold leading-4 text-white">{hard > 99 ? '99+' : hard}</span>}
       </a>
       <a href={href.settings()} className={item(route.name === 'settings')}>
         <Settings className="h-5 w-5" /> Cài đặt
