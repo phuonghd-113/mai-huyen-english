@@ -5,6 +5,9 @@ import { ProgressProvider } from './lib/progress';
 import { href, useRoute } from './lib/router';
 import { ComingSoon } from './pages/ComingSoon';
 import { Dashboard } from './pages/Dashboard';
+import { ExamPage } from './pages/ExamPage';
+import { ExamReviewPage } from './pages/ExamReviewPage';
+import { ExamsPage } from './pages/ExamsPage';
 import { ReviewPage } from './pages/ReviewPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { UnitPage } from './pages/UnitPage';
@@ -48,9 +51,13 @@ function Routes() {
       page = <SettingsPage />;
       break;
     case 'exams':
+      page = <ExamsPage />;
+      break;
     case 'exam':
+      page = <ExamPage key={route.examId} examId={route.examId} />;
+      break;
     case 'exam-review':
-      page = <ComingSoon title="Thi thử" />;
+      page = <ExamReviewPage key={route.attemptId} examId={route.examId} attemptId={route.attemptId} />;
       break;
     case 'practice':
       page = <ComingSoon title="Luyện theo dạng" />;

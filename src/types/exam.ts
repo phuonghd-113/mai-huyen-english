@@ -145,5 +145,7 @@ export interface ExamAttempt {
   score?: number;
   /** milliseconds left on the timer when last saved (resume after closing the app) */
   remainingMs?: number;
+  /** left unfinished and replaced by a fresh start: hidden, not scored */
+  abandoned?: boolean;
   t: number;
 }

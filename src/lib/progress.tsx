@@ -51,6 +51,8 @@ interface ProgressApi {
   updateScore: (scope: string, patch: (prev: ScopeScore) => ScopeScore) => void;
   /** exam question answered in practice, review or a submitted paper */
   recordQuestion: (id: string, correct: boolean) => void;
+  /** a submitted paper: every scored question at once */
+  recordQuestions: (results: [id: string, correct: boolean][]) => void;
   getQuestion: (id: string) => QuestionProgress | undefined;
   /** create or update one sitting of a paper (answers, timer, submit) */
   saveAttempt: (attempt: Omit<ExamAttempt, 't'>) => void;
@@ -273,6 +275,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         })),
       recordQuestion: (id, correct) =>
         mutate((s) => ({ ...s, questions: { ...s.questions, [id]: applyAnswer(s.questions[id] ?? {}, correct, Date.now()) } })),
+      recordQuestions: (results) =>
+        mutate((s) => {
+          if (!results.length) return s;
+          const now = Date.now();
+          const questions = { ...s.questions };
+          for (const [id, ok] of results) questions[id] = applyAnswer(questions[id] ?? {}, ok, now);
+          return { ...s, questions };
+        }),
       getQuestion: (id) => state.questions[id],
       saveAttempt: (attempt) => mutate((s) => ({ ...s, attempts: { ...s.attempts, [attempt.id]: { ...attempt, t: Date.now() } } })),
       touchUnit: (unitId) => mutate((s) => (s.lastUnitId === unitId ? s : { ...s, lastUnitId: unitId, lastUnitAt: Date.now() })),

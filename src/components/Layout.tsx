@@ -1,4 +1,4 @@
-import { ArrowLeft, Flame, House, LibraryBig, Settings } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Flame, House, LibraryBig, Settings } from 'lucide-react';
 import { useMemo, type ReactNode } from 'react';
 import { ALL_WORDS, UNITS } from '../data';
 import { isHard, useProgress } from '../lib/progress';
@@ -6,6 +6,8 @@ import { href, type Route } from '../lib/router';
 import { cx } from '../lib/ui';
 import { SyncDot, syncLabel } from './AccountPanel';
 import { ProgressBar } from './common';
+
+const isExamRoute = (r: Route) => r.name === 'exams' || r.name === 'exam' || r.name === 'exam-review';
 
 function useHardCount() {
   const { state } = useProgress();
@@ -31,6 +33,9 @@ function Sidebar({ route }: { route: Route }) {
       <nav className="space-y-1 px-3" aria-label="Điều hướng chính">
         <a href={href.home()} className={navItem(route.name === 'home')}>
           <House className="h-[18px] w-[18px]" /> Trang chủ
+        </a>
+        <a href={href.exams()} className={navItem(isExamRoute(route))}>
+          <ClipboardList className="h-[18px] w-[18px]" /> Thi thử
         </a>
         <a href={href.review()} className={navItem(route.name === 'review')}>
           <Flame className="h-[18px] w-[18px]" /> Ôn tập từ khó
@@ -72,6 +77,9 @@ function BottomNav({ route }: { route: Route }) {
     <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden" aria-label="Điều hướng chính">
       <a href={href.home()} className={item(route.name === 'home')}>
         <House className="h-5 w-5" /> Trang chủ
+      </a>
+      <a href={href.exams()} className={item(isExamRoute(route))}>
+        <ClipboardList className="h-5 w-5" /> Thi thử
       </a>
       <a href={href.units()} className={item(route.name === 'units' || route.name === 'unit')}>
         <LibraryBig className="h-5 w-5" /> Unit

@@ -98,6 +98,7 @@ function cleanAttempt(id: string, raw: unknown): ExamAttempt | null {
   if (submittedAt !== undefined) a.submittedAt = submittedAt;
   if (score !== undefined) a.score = score;
   if (remainingMs !== undefined) a.remainingMs = remainingMs;
+  if (r.abandoned === true) a.abandoned = true;
   return a;
 }
 

@@ -185,7 +185,7 @@ Thanh dưới trên mobile và sidebar trên desktop gồm 5 mục: **Trang ch�
 |---|---|---|---|
 | 1 | ✅ **Nền tảng** | Kiểu `Exam`/`Question`, `grade.ts`, tiến độ v2 và migrate, router mới, `check:data` cho đề | Build và test chạy; tiến độ cũ còn nguyên |
 | 2 | **Import** | `npm run import:exam` cho .docx, rồi .pdf; ghép đáp án; trang xem trước | Import được 2–3 đề thật, chỉ còn ít cảnh báo |
-| 3 | **Thi thử** | Giao diện cho từng dạng bài, đồng hồ, lưu bài đang làm, chấm điểm, xem lại, tự chấm phần viết | Làm trọn được một đề thật |
+| 3 | ✅ **Thi thử** | Giao diện cho từng dạng bài, đồng hồ, lưu bài đang làm, chấm điểm, xem lại, tự chấm phần viết | Làm trọn được một đề thật |
 | 4 | **Luyện tập và sổ lỗi** | Luyện theo dạng, sổ lỗi sai, SRS chung cho câu hỏi và từ vựng | Câu sai tự quay lại đúng lịch |
 | 5 | **Thống kê** | Biểu đồ điểm, tỉ lệ đúng theo dạng, mục "Hôm nay" | Biết dạng nào yếu và luyện được ngay |
 | 6 | **Hoàn thiện** | PWA để làm bài offline; thêm giải thích cho những câu hay sai | |
