@@ -60,7 +60,7 @@ export default defineConfig({
       manifest: {
         name: 'Ôn thi HSG tiếng Anh 8',
         short_name: 'Ôn HSG Anh 8',
-        description: 'Thi thử, luyện theo dạng bài, sổ lỗi sai và từ vựng Destination B1.',
+        description: 'Ôn thi học sinh giỏi tiếng Anh lớp 8: thi thử có tính giờ, luyện theo dạng bài, sổ lỗi sai và 838 từ vựng Destination B1.',
         lang: 'vi',
         start_url: '/',
         display: 'standalone',

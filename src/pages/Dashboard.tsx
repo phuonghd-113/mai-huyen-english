@@ -101,7 +101,7 @@ export function Dashboard() {
 
   return (
     <>
-      <MobileHeader title="Từ vựng Destination B1" />
+      <MobileHeader title="Ôn thi HSG tiếng Anh 8" />
       <main className="mx-auto w-full max-w-6xl px-4 pb-10 pt-6 md:px-10 md:pt-12">
         <section className="enter max-w-3xl">
           <p className="text-[15px] text-slate-600">Destination B1 · 14 unit · {total} từ và cụm từ</p>

@@ -37,8 +37,8 @@ function Sidebar({ route }: { route: Route }) {
       <a href={href.home()} className="flex items-center gap-3 px-5 py-5">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 font-display text-lg font-semibold text-slate-50">B1</span>
         <span>
-          <span className="block font-display text-lg font-semibold leading-tight text-slate-900">Destination B1</span>
-          <span className="block text-[13px] text-slate-500">Sổ từ vựng của bạn</span>
+          <span className="block font-display text-lg font-semibold leading-tight text-slate-900">Ôn HSG Anh 8</span>
+          <span className="block text-[13px] text-slate-500">Lớp 8 · từ vựng B1</span>
         </span>
       </a>
       <nav className="space-y-1 px-3" aria-label="Điều hướng chính">
